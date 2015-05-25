@@ -19,6 +19,7 @@ namespace xServer.Core
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
+        public FrmRegistryEditor FrmRe { get; set; }
         public FrmSystemInformation FrmSi { get; set; }
         public FrmShowMessagebox FrmSm { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
@@ -53,6 +54,8 @@ namespace xServer.Core
                 FrmTm.Close();
             if (FrmFm != null)
                 FrmFm.Close();
+            if (FrmRe != null)
+                FrmRe.Close();
             if (FrmSi != null)
                 FrmSi.Close();
             if (FrmSm != null)

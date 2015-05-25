@@ -416,6 +416,21 @@ namespace xServer.Forms
             }
         }
 
+        private void ctxtRegistryEditor_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.FrmRe != null)
+                {
+                    c.Value.FrmRe.Focus();
+                    return;
+                }
+                FrmRegistryEditor frmRE = new FrmRegistryEditor(c);
+                frmRE.Show();
+            }
+        }
+
         private void ctxtStartupManager_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)

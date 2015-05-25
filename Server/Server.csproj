@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -266,6 +267,12 @@
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.Designer.cs">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -368,6 +375,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegistryEditor.resx">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
