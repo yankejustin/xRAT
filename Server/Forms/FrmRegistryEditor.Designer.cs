@@ -39,6 +39,7 @@
             this.tvRegistryDirectory.Name = "tvRegistryDirectory";
             this.tvRegistryDirectory.Size = new System.Drawing.Size(155, 402);
             this.tvRegistryDirectory.TabIndex = 0;
+            this.tvRegistryDirectory.Click += new System.EventHandler(this.tvRegistryDirectory_Click);
             // 
             // lstRegistryKeys
             // 
