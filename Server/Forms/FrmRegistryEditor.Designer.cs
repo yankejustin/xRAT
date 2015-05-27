@@ -37,7 +37,6 @@
             // 
             this.tvRegistryDirectory.Location = new System.Drawing.Point(4, 5);
             this.tvRegistryDirectory.Name = "tvRegistryDirectory";
-            this.tvRegistryDirectory.ShowPlusMinus = false;
             this.tvRegistryDirectory.Size = new System.Drawing.Size(155, 402);
             this.tvRegistryDirectory.TabIndex = 0;
             // 
@@ -63,6 +62,7 @@
             this.Name = "FrmRegistryEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "xRAT 2.0 - Registry Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRegistryEditor_FormClosing);
             this.ResumeLayout(false);
 
         }
