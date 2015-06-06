@@ -332,7 +332,7 @@ namespace xServer.Core.Networking
                 else
                     Disconnect();
             }
-            catch (Exception ex)
+            catch
             {
                 Disconnect();
             }
