@@ -659,7 +659,9 @@
             // 
             // groupAdditional
             // 
+#if MULTI_CLIENT
             this.groupAdditional.Controls.Add(this.txtClientCount);
+#endif
             this.groupAdditional.Controls.Add(this.label1);
             this.groupAdditional.Controls.Add(this.chkKeylogger);
             this.groupAdditional.Controls.Add(this.chkIconChange);
