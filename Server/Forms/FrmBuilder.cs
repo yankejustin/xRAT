@@ -237,8 +237,6 @@ namespace xServer.Forms
             }
         }
 
-#endif
-
         // WinForms-Generated code below...
         private System.Windows.Forms.TextBox txtClientCount = new System.Windows.Forms.TextBox();
 
@@ -247,7 +245,6 @@ namespace xServer.Forms
         /// This method call will be ignored on any configuration other than
         /// "MULTI_CLIENT".
         /// </summary>
-        [Conditional("MULTI_CLIENT")]
         private void InitializeClientCountTxtbox()
         {
             // 
@@ -262,9 +259,13 @@ namespace xServer.Forms
             this.txtClientCount.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtClientCount_KeyPress);
         }
 
+#endif
+
         public FrmBuilder()
         {
+#if MULTI_CLIENT
             InitializeClientCountTxtbox();
+#endif
 
             InitializeComponent();
         }
