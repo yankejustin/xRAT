@@ -39,7 +39,7 @@
     <StartupObject>xClient.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Multi-Client Release|x86'">
-    <OutputPath>bin\x86\Multi-Client Release\</OutputPath>
+    <OutputPath>..\Bin\Multi-Client Release\</OutputPath>
     <DefineConstants>MULTI_CLIENT;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>

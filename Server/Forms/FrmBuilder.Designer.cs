@@ -86,6 +86,7 @@
             this.txtProductName = new System.Windows.Forms.TextBox();
             this.lblProductName = new System.Windows.Forms.Label();
             this.groupAdditional = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
             this.groupConnection.SuspendLayout();
             this.groupInstall.SuspendLayout();
@@ -658,6 +659,8 @@
             // 
             // groupAdditional
             // 
+            this.groupAdditional.Controls.Add(this.txtClientCount);
+            this.groupAdditional.Controls.Add(this.label1);
             this.groupAdditional.Controls.Add(this.chkKeylogger);
             this.groupAdditional.Controls.Add(this.chkIconChange);
             this.groupAdditional.Controls.Add(this.chkElevation);
@@ -667,6 +670,15 @@
             this.groupAdditional.TabIndex = 3;
             this.groupAdditional.TabStop = false;
             this.groupAdditional.Text = "Additional Settings";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(163, 128);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Client Count:";
             // 
             // chkKeylogger
             // 
@@ -696,8 +708,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmBuilder";
-            this.Text = "xRAT 2.0 - Builder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "xRAT 2.0 - Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
             this.groupConnection.ResumeLayout(false);
@@ -773,5 +785,6 @@
         private System.Windows.Forms.CheckBox chkChangeAsmInfo;
         private System.Windows.Forms.GroupBox groupAdditional;
         private System.Windows.Forms.CheckBox chkKeylogger;
+        private System.Windows.Forms.Label label1;
     }
 }
