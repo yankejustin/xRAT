@@ -39,7 +39,13 @@ namespace xClient.Config
         public static string INSTALLNAME = "INSTALL";
         public static bool INSTALL = false;
         public static bool STARTUP = true;
+#if MULTI_CLIENT
+        // Construct a unique mutex for the client to allow multiple
+        // clients to run on the same machine.
+        public static string MUTEX = Guid.NewGuid().ToString();
+#else
         public static string MUTEX = "MUTEX";
+#endif
         public static string STARTUPKEY = "STARTUP";
         public static bool HIDEFILE = true;
         public static bool ENABLEUACESCALATION = true;
