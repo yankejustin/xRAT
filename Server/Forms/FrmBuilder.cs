@@ -237,6 +237,8 @@ namespace xServer.Forms
             }
         }
 
+#endif
+
         // WinForms-Generated code below...
         private System.Windows.Forms.TextBox txtClientCount = new System.Windows.Forms.TextBox();
 
@@ -259,8 +261,6 @@ namespace xServer.Forms
             this.txtClientCount.Text = "1";
             this.txtClientCount.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtClientCount_KeyPress);
         }
-
-#endif
 
         public FrmBuilder()
         {
