@@ -241,7 +241,7 @@ namespace xServer.Core.Networking
                     }
 
                     _item = new SocketAsyncEventArgs();
-                    _item.Completed += Process;
+                    _item.Completed += AcceptClient;
 
                     if (_handle != null)
                     {
@@ -258,7 +258,6 @@ namespace xServer.Core.Networking
                         BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));
                     _handle.Listen(1000);
 
@@ -268,7 +267,7 @@ namespace xServer.Core.Networking
                     OnServerState(true);
 
                     if (!_handle.AcceptAsync(_item))
-                        Process(null, _item);
+                        AcceptClient(null, _item);
                 }
             }
             catch (Exception)
@@ -307,33 +306,41 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="s">Unused, use null.</param>
         /// <param name="e">Asynchronously Socket Event</param>
-        private void Process(object s, SocketAsyncEventArgs e)
+        private void AcceptClient(object s, SocketAsyncEventArgs e)
         {
             try
             {
-                if (e.SocketError == SocketError.Success)
+                do
                 {
-                    Client client = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
-
-                    lock (_clientsLock)
+                    switch (e.SocketError)
                     {
-                        _clients.Add(client);
-                        client.ClientState += OnClientState;
-                        client.ClientRead += OnClientRead;
-                        client.ClientWrite += OnClientWrite;
+                        case SocketError.Success:
+                            if (BufferManager.BuffersAvailable == 0)
+                                BufferManager.IncreaseBufferCount(1);
 
-                        if (BufferManager.BuffersAvailable == 0)
-                            BufferManager.IncreaseBufferCount(1);
+                            Client client = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
 
-                        OnClientState(client, true);
+                            lock (_clientsLock)
+                            {
+                                _clients.Add(client);
+                                client.ClientState += OnClientState;
+                                client.ClientRead += OnClientRead;
+                                client.ClientWrite += OnClientWrite;
+
+                                OnClientState(client, true);
+                            }
+                            break;
+                        case SocketError.ConnectionReset:
+                            break;
+                        default:
+                            throw new Exception("SocketError");
                     }
 
-                    e.AcceptSocket = null;
-                    if (!_handle.AcceptAsync(e))
-                        Process(null, e);
-                }
-                else
-                    Disconnect();
+                    e.AcceptSocket = null; // enable reuse
+                } while (!_handle.AcceptAsync(e));
+            }
+            catch (ObjectDisposedException)
+            {
             }
             catch (Exception ex)
             {
@@ -383,7 +390,9 @@ namespace xServer.Core.Networking
             Processing = true;
 
             if (_handle != null)
+            {
                 _handle.Close();
+            }
 
             lock (_clientsLock)
             {

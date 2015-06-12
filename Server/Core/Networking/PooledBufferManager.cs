@@ -11,7 +11,7 @@ namespace xServer.Core.Networking
     {
         private readonly int _bufferLength;
         private int _bufferCount;
-        private Stack<byte[]> _buffers;
+        private readonly Stack<byte[]> _buffers;
 
         #region events
         /// <summary>
