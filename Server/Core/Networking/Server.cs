@@ -342,7 +342,7 @@ namespace xServer.Core.Networking
             catch (ObjectDisposedException)
             {
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Disconnect();
             }
