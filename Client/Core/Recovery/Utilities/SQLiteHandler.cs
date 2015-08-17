@@ -43,10 +43,7 @@ namespace xClient.Core.Recovery.Utilities
                 {
                     throw new InvalidDataException("Auto-vacuum capable database is not supported");
                 }
-                //if (decimal.Compare(new decimal(this.ConvertToInteger(0x2c, 4)), 4M) >= 0)
-                //{
-                //    throw new Exception("No supported Schema layer file-format");
-                //}
+
                 this.page_size = (ushort)this.ConvertToInteger(0x10, 2);
                 this.encoding = this.ConvertToInteger(0x38, 4);
                 if (decimal.Compare(new decimal(this.encoding), decimal.Zero) == 0)
