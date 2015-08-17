@@ -37,11 +37,11 @@ namespace xClient.Core.Recovery.Utilities
                 this.db_bytes = Encoding.Default.GetBytes(str);
                 if (Encoding.Default.GetString(this.db_bytes, 0, 15).CompareTo("SQLite format 3") != 0)
                 {
-                    throw new Exception("Not a valid SQLite 3 Database File");
+                    throw new ArgumentException("Not a valid SQLite 3 Database File");
                 }
                 if (this.db_bytes[0x34] != 0)
                 {
-                    throw new Exception("Auto-vacuum capable database is not supported");
+                    throw new InvalidDataException("Auto-vacuum capable database is not supported");
                 }
                 //if (decimal.Compare(new decimal(this.ConvertToInteger(0x2c, 4)), 4M) >= 0)
                 //{
