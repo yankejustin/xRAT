@@ -4,7 +4,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using xClient.Core.Data;
-using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Utilities
 {
