@@ -50,7 +50,7 @@ namespace xClient.Core.Recovery.Utilities
                 {
                     this.encoding = 1L;
                 }
-                this.ReadMasterTable(100L);
+                this.ReadMasterTable(100);
             }
         }
 
@@ -195,11 +195,11 @@ namespace xClient.Core.Recovery.Utilities
             return ((value & 1L) == 1L);
         }
 
-        private void ReadMasterTable(ulong Offset)
+        private void ReadMasterTable(int Offset)
         {
-            if (this.db_bytes[(int)Offset] == 13)
+            if (this.db_bytes != null && this.db_bytes.Length > Offset && this.db_bytes[(int)Offset] == 13)
             {
-                ushort num2 = Convert.ToUInt16(decimal.Subtract(new decimal(this.ConvertToInteger(Convert.ToInt32(decimal.Add(new decimal(Offset), 3M)), 2)), decimal.One));
+                ushort num2 = Convert.ToUInt16((Offset + 3) - 1);
                 int length = 0;
                 if (this.master_table_entries != null)
                 {
@@ -213,19 +213,20 @@ namespace xClient.Core.Recovery.Utilities
                 int num13 = num2;
                 for (int i = 0; i <= num13; i++)
                 {
-                    ulong num = this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(Offset), 8M), new decimal(i * 2))), 2);
-                    if (decimal.Compare(new decimal(Offset), 100M) != 0)
+                    int num = (Offset + 8) + (i * 2);
+                    if (Offset == 100)
                     {
                         num += Offset;
                     }
-                    int endIndex = this.GVL((int)num);
-                    long num7 = this.CVL((int)num, endIndex);
-                    int num6 = this.GVL(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), decimal.Subtract(new decimal(endIndex), new decimal(num))), decimal.One)));
-                    this.master_table_entries[length + i].row_id = this.CVL(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), decimal.Subtract(new decimal(endIndex), new decimal(num))), decimal.One)), num6);
-                    num = Convert.ToUInt64(decimal.Add(decimal.Add(new decimal(num), decimal.Subtract(new decimal(num6), new decimal(num))), decimal.One));
-                    endIndex = this.GVL((int)num);
+
+                    int endIndex = this.GVL(num);
+                    long num7 = this.CVL(num, endIndex);
+                    int num6 = this.GVL((num + (endIndex - num)) + 1);
+                    this.master_table_entries[length + i].row_id = this.CVL(((num + endIndex - num) + 1), num6);
+                    num = (num + (num6 - num)) + 1;
+                    endIndex = this.GVL(num);
                     num6 = endIndex;
-                    long num5 = this.CVL((int)num, endIndex);
+                    long num5 = this.CVL(num, endIndex);
                     long[] numArray = new long[5];
                     int index = 0;
 
@@ -259,7 +260,7 @@ namespace xClient.Core.Recovery.Utilities
                         case 1:
                             {
                                 this.master_table_entries[length + i].item_type =
-                                    Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                                    Encoding.Default.GetString(this.db_bytes, (num + (int)num5), (int)numArray[0]);
 
                                 this.master_table_entries[length + i].item_name =
                                     Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
@@ -273,7 +274,7 @@ namespace xClient.Core.Recovery.Utilities
                         case 2:
                             {
                                 this.master_table_entries[length + i].item_type =
-                                    Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                                    Encoding.Unicode.GetString(this.db_bytes, (num + (int)num5), (int)numArray[0]);
 
                                 this.master_table_entries[length + i].item_name =
                                     Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)),
@@ -316,13 +317,13 @@ namespace xClient.Core.Recovery.Utilities
                 for (int j = 0; j <= num14; j++)
                 {
                     ushort startIndex = (ushort)this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(Offset), 12M), new decimal(j * 2))), 2);
-                    if (decimal.Compare(new decimal(Offset), 100M) == 0)
+                    if (Offset == 100)
                     {
-                        this.ReadMasterTable(Convert.ToUInt64(decimal.Multiply(decimal.Subtract(new decimal(this.ConvertToInteger(startIndex, 4)), decimal.One), new decimal(this.page_size))));
+                        this.ReadMasterTable((startIndex - 1) * this.page_size);
                     }
                     else
                     {
-                        this.ReadMasterTable(Convert.ToUInt64(decimal.Multiply(decimal.Subtract(new decimal(this.ConvertToInteger((int)(Offset + startIndex), 4)), decimal.One), new decimal(this.page_size))));
+                        this.ReadMasterTable(decimal.Multiply(decimal.Subtract(new decimal(this.ConvertToInteger((int)(Offset + startIndex), 4)), decimal.One), new decimal(this.page_size)));
                     }
                 }
                 this.ReadMasterTable(Convert.ToUInt64(decimal.Multiply(decimal.Subtract(new decimal(this.ConvertToInteger(Convert.ToInt32(decimal.Add(new decimal(Offset), 8M)), 4)), decimal.One), new decimal(this.page_size))));
