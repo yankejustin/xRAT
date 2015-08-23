@@ -7,16 +7,23 @@ namespace xClient.Core.Packets.ClientPackets
     [Serializable]
     public class GetRegistryKeysResponse : IPacket
     {
-        public RegSeekerMatch[] Matches { get; set; }
+        public string[] Key { get; set; }
+
+        public string[] Value { get; set; }
+
+        public string[] Data { get; set; }
 
         public bool IsRootKey { get; set; }
 
         public GetRegistryKeysResponse()
         { }
 
-        public GetRegistryKeysResponse(RegSeekerMatch[] matches, bool isRootKey = false)
+        public GetRegistryKeysResponse(string[] key, string[] value, string[] data, bool isRootKey = false)
         {
-            Matches = matches;
+            Key = key;
+            Value = value;
+            Data = data;
+            IsRootKey = isRootKey;
         }
 
         public void Execute(Client client)
